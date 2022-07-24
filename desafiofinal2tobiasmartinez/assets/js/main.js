@@ -15,7 +15,7 @@ const productos=[
 function obtenerProductosLS(){
     return JSON.parse(localStorage.getItem("productos")) || {};
 }
-function safeProductsLS(){
+function safeProductsLS(productos){
     localStorage.setItem("productos", JSON.stringify(productos));
 }
 function obtenerProductosCarrito(){
@@ -28,7 +28,7 @@ function safeProductsCarrito(productos){
 
 
 
-function loadProducts(){
+/*function loadProducts(){
     let productos= obtenerProductosLS();
     let contenido="";
     for(let producto of productos) {
@@ -45,11 +45,44 @@ function loadProducts(){
     <div>` 
     }
     document.getElementById("productos").innerHTML = contenido;
+}*/
+function loadProducts(){
+    let productos= obtenerProductosLS();
+    for(let producto of productos) {
+        
+        let columna = document.createElement("div");
+        columna.className = "col-md-4"
+        let card = document.createElement("div");
+        card.className = "card border-0"
+        let imagen = document.createElement("img");
+        imagen.src= `images/${producto.imagen}`;
+        imagen.className= "card-img-top"
+        imagen.alt=`${producto.nombre}`;
+        let card_body= document.createElement("div");
+        card_body.className="card-body";
+        let titulo= document.createElement("h5");
+        titulo.className = "card-title text-center";
+        titulo.innerText = producto.nombre;
+        let precio= document.createElement("p")
+        precio.className= "card-title text-center";
+        precio.innerText = "$" + producto.precio;
+        let parrafo_boton= document.createElement("p")
+        parrafo_boton.className="card-title text-center";
+        parrafo_boton.innerHTML = `<a href="#" onclick="agregarCarrito(${producto.id})"class= "btn btn-primary">Agregar <a/>`;
+        
+        card_body.appendChild(titulo);
+        card_body.appendChild(precio);
+        card_body.appendChild(parrafo_boton);
+        card.appendChild(imagen);
+        card.appendChild(card_body);
+        columna.appendChild(card);
+        document.getElementById("productos").appendChild(columna);
+    }
 }
 
 
 function updateBtnCarrito(){
-    let productos= obtenerProductosLS();
+    let productos= obtenerProductosCarrito();
     
     let contenido=`<button type="button" class="btn btn-primary position-relative"><img src="../img/iconobadge.png" width="24">
     <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
@@ -60,7 +93,10 @@ function updateBtnCarrito(){
         for(let producto of productos){
             total += producto.cantidad;
         }
-        contenido = `<button type="button" class="btn btn-warning position-relative">     <img src="../img/iconobadge.png" width="24">     <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">       ${total} <span class="visually-hidden"></span>     </span></button>;`;
+        contenido=`<button type="button" class="btn btn-primary position-relative"><img src="../img/iconobadge.png" width="24">
+        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+          ${total} </span>
+      </button>`;
     }
     document.getElementById("boton_carrito").innerHTML=contenido;
 }
@@ -71,11 +107,12 @@ function buscarProducto(id){
 function agregarCarrito(id){
     let producto= buscarProducto(id);
     let productos_carrito= obtenerProductosCarrito();
-    producto.cantida= 1;
+    producto_cantidad=1;
     productos_carrito.push(producto);
-    safeProductsCarrito(productos_carrito);
-    updateBtnCarrito();
 }
-safeProductsLS();
-updateBtnCarrito();
+safeProductsLS(productos);
 loadProducts();
+updateBtnCarrito();
+
+
+
